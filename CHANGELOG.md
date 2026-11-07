@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1
+
+- Correção de compatibilidade com Foundry VTT v13:
+  - CSS agora também casa com estruturas sem `.chat-scroll` (ex.: `.window-content`).
+  - JS encontra o container de rolagem com mais fallbacks (`.window-content`, próprio elemento).
+  - `isAtBottom` só sobrescrito quando não é campo privado (v13 usa `#isAtBottom`, ignorado com segurança).
+
 ## 1.2.0
 
 - Novo arquivo `styles/sidebar-right.css`: move a barra de abas do sidebar

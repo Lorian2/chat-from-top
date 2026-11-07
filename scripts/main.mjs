@@ -10,21 +10,34 @@
  *
  * O listener de scroll do core é bloqueado no ancestral: ele assume o layout
  * antigo e, se rodasse, pularia para a mensagem mais antiga.
+ *
+ * Limitação v13: `isAtBottom` é um campo privado (#isAtBottom) no v13, não dá
+ * para sobrescrever via prototype. O scroll ainda inverte pelo CSS, mas o core
+ * pode usar seu próprio valor de isAtBottom internamente.
  */
 
 Hooks.once("init", () => {
   const { ChatLog } = foundry.applications.sidebar.tabs;
   const proto = ChatLog.prototype;
 
-  // O container que rola é .chat-scroll; se ele não existir, o próprio .chat-log rola.
-  const getScroller = log => log.querySelector(".chat-scroll") ?? log.querySelector(".chat-log");
+  // O container que rola é .chat-scroll; se não existir, tenta .chat-log, .window-content ou o próprio elemento.
+  const getScroller = log =>
+    log.querySelector(".chat-scroll") ??
+    log.querySelector(".chat-log") ??
+    log.querySelector(".window-content") ??
+    log;
 
-  Object.defineProperty(proto, "isAtBottom", {
-    configurable: true,
-    get() {
-      return this._chatFromTopAtNewest ?? true;
-    }
-  });
+  // Só sobrescreve isAtBottom se não for campo privado (v14). No v13 é #isAtBottom e ignora silenciosamente.
+  try {
+    Object.defineProperty(proto, "isAtBottom", {
+      configurable: true,
+      get() {
+        return this._chatFromTopAtNewest ?? true;
+      }
+    });
+  } catch (_) {
+    // v13: campo privado, não sobrescrevível. Segue sem sobrescrever.
+  }
 
   proto.scrollBottom = async function({ popout = false, waitImages = false } = {}) {
     if (!this.rendered) return;
@@ -40,7 +53,7 @@ Hooks.once("init", () => {
 
   proto._chatFromTopOnScroll = function(event) {
     const scroll = event.target;
-    if (!scroll?.matches?.(".chat-scroll, .chat-log")) return;
+    if (!scroll?.matches?.(".chat-scroll, .chat-log, .window-content")) return;
     event.stopPropagation();
 
     const max = scroll.scrollHeight - scroll.clientHeight;
