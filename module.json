@@ -3,7 +3,7 @@
   "type": "module",
   "title": "Chat do Topo",
   "description": "Inverte o fluxo do chat: a mensagem mais recente aparece no topo e as antigas descem conforme novas chegam.",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "compatibility": { "minimum": "13", "maximum": "14", "verified": "14.364" },
   "authors": [{ "name": "Luan" }],
   "url": "https://github.com/Lorian2/chat-from-top",

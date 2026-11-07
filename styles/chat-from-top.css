@@ -5,9 +5,20 @@
 #chat-popout .chat-log,
 .chat-scroll > .chat-log,
 #chat .window-content .chat-log,
-#chat-popout .window-content .chat-log {
-  display: flex;
-  flex-direction: column-reverse;
+#chat-popout .window-content .chat-log,
+#chat > .window-content > .chat-log,
+#chat-popout > .window-content > .chat-log,
+.sidebar-tab#chat .chat-log,
+.sidebar-tab#chat-popout .chat-log {
+  display: flex !important;
+  flex-direction: column-reverse !important;
+}
+
+/* Se o .chat-log não for o container que rola, inverte também o container pai direto. */
+#chat > .window-content,
+#chat-popout > .window-content {
+  display: flex !important;
+  flex-direction: column-reverse !important;
 }
 
 /* O botão do core aponta para baixo; agora "descer" leva às mensagens antigas. */

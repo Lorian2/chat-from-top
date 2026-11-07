@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.2
+
+- Correção agressiva para Foundry VTT v13:
+  - CSS aplica `display: flex; flex-direction: column-reverse !important` em mais
+    seletores (incluindo `.window-content` direto).
+  - JS aplica o estilo inline no container do chat após o primeiro render, como
+    fallback quando o CSS não alcança a estrutura do DOM do v13.
+
 ## 1.2.1
 
 - Correção de compatibilidade com Foundry VTT v13:

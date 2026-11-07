@@ -39,6 +39,22 @@ Hooks.once("init", () => {
     // v13: campo privado, não sobrescrevível. Segue sem sobrescrever.
   }
 
+  // Força o layout invertido no elemento do chat após o render (fallback para v13
+  // onde o CSS pode não alcançar devido a seletores específicos do core).
+  const forceReverse = log => {
+    if (!log) return;
+    const candidates = [
+      log.querySelector(".chat-scroll"),
+      log.querySelector(".chat-log"),
+      log.querySelector(".window-content"),
+      log
+    ].filter(Boolean);
+    for (const el of candidates) {
+      el.style.display = "flex";
+      el.style.flexDirection = "column-reverse";
+    }
+  };
+
   proto.scrollBottom = async function({ popout = false, waitImages = false } = {}) {
     if (!this.rendered) return;
     const scroll = getScroller(this.element);
@@ -77,6 +93,7 @@ Hooks.once("init", () => {
   const onFirstRender = proto._onFirstRender;
   proto._onFirstRender = async function(context, options) {
     await onFirstRender.call(this, context, options);
+    forceReverse(this.element);
     this.element.addEventListener("scroll", event => this._chatFromTopOnScroll(event), {
       capture: true,
       passive: true
