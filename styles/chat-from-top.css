@@ -1,0 +1,11 @@
+/* A mensagem mais nova é o último item do DOM; column-reverse a coloca no topo. */
+.chat-scroll > .chat-log {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+/* O botão do core aponta para baixo; agora "descer" leva às mensagens antigas. */
+#chat .jump-to-bottom,
+#chat-popout .jump-to-bottom {
+  transform: rotate(180deg);
+}
