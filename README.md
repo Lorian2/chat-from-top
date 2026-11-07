@@ -13,7 +13,7 @@ antigas descem conforme novas chegam. A caixa de entrada continua embaixo.
 2. Cole este endereço em **URL do Manifesto**:
 
    ```
-   https://github.com/SEU-USUARIO/chat-from-top/releases/latest/download/module.json
+   https://github.com/Lorian2/chat-from-top/releases/latest/download/module.json
    ```
 
 3. Clique em **Instalar**.
@@ -21,7 +21,7 @@ antigas descem conforme novas chegam. A caixa de entrada continua embaixo.
 
 ### Manual
 
-1. Baixe o `chat-from-top.zip` da aba [Releases](https://github.com/SEU-USUARIO/chat-from-top/releases).
+1. Baixe o `chat-from-top.zip` da aba [Releases](https://github.com/Lorian2/chat-from-top/releases).
 2. Extraia a pasta `chat-from-top` em `Data/modules/` do seu Foundry.
 3. Recarregue o Foundry e ative **Chat do Topo** em *Gerenciar Módulos*.
 4. Recarregue a sessão.
