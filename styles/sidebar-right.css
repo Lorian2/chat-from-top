@@ -1,0 +1,30 @@
+/* Move a barra de abas do sidebar (chat, iniciativa, atores, ...) para a borda
+   direita, deixando o painel — e a caixa de texto do chat — à esquerda dela.
+   A barra sai do fluxo do flex e é fixada na borda direita; o painel abre para a
+   esquerda e ganha espaço para ela. */
+
+#sidebar {
+  position: relative;
+}
+
+#sidebar > #sidebar-tabs {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+#sidebar > #sidebar-content {
+  margin-left: 0;
+  margin-right: calc(var(--sidebar-full-width) * -1);
+}
+
+#sidebar > #sidebar-content.expanded {
+  margin-left: 0;
+  /* shortcut: largura fixa da barra de abas (32px do botão + 16px de padding) */
+  margin-right: 48px;
+}
+
+/* O canto arredondado do painel aponta para a barra, agora à direita. */
+#sidebar .sidebar-tab:not(.sidebar-popout) {
+  border-radius: 0 5px 5px 0;
+}

@@ -4,6 +4,8 @@ Módulo para **Foundry VTT v13 e v14** (validado em 14.364 com dnd5e 5.3.3).
 
 Inverte o fluxo do chat: a mensagem mais recente aparece **no topo** e as mensagens
 antigas descem conforme novas chegam. A caixa de entrada continua embaixo.
+Opcionalmente, a barra de abas do sidebar (chat, iniciativa, atores, ...) pode ser
+movida para a borda direita.
 
 ## Instalação
 
@@ -28,7 +30,9 @@ antigas descem conforme novas chegam. A caixa de entrada continua embaixo.
 
 ## Como funciona
 
-- `styles/chat-from-top.css` usa `flex-direction: column-reverse` no `.chat-log`,
+- `styles/chat-from-top.css` — inverte o chat (`flex-direction: column-reverse`).
+- `styles/sidebar-right.css` — move a barra de abas do sidebar para a borda direita,
+  deixando o painel (e a caixa de texto do chat) à esquerda dela.
   o que coloca o último item do DOM (a mensagem mais nova) no topo da tela.
 - `scripts/main.mjs` ajusta o comportamento do core:
   - `scrollBottom()` passa a rolar para o topo (mensagem mais recente);
@@ -41,6 +45,10 @@ antigas descem conforme novas chegam. A caixa de entrada continua embaixo.
 - Funciona com qualquer sistema; foi validado com o sistema D&D 5e.
 - Se outro módulo também controlar o scroll do chat, pode haver conflito.
 - O histórico continua carregando em lotes ao rolar para baixo, como no core.
+- O `sidebar-right.css` move a barra de abas do core para a direita; se outro módulo
+  mexer no layout do sidebar, pode haver conflito.
+
+## Desenvolvimento
 
 ## Desenvolvimento
 

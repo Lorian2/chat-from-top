@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+- Novo arquivo `styles/sidebar-right.css`: move a barra de abas do sidebar
+  (chat, iniciativa, atores, ...) para a borda direita, deixando o painel e a
+  caixa de texto do chat à esquerda dela.
+
 ## 1.1.0
 
 - Compatível com Foundry VTT v13 e v14.
