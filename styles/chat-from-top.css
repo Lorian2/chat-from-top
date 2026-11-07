@@ -1,5 +1,7 @@
-/* A mensagem mais nova é o último item do DOM; column-reverse a coloca no topo. */
-.chat-scroll > .chat-log {
+/* A mensagem mais nova é o último item do DOM; column-reverse a coloca no topo.
+   #chat/#chat-popout restringem ao log principal (o painel de notificações fica de fora). */
+#chat .chat-log,
+#chat-popout .chat-log {
   display: flex;
   flex-direction: column-reverse;
 }

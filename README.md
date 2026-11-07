@@ -1,6 +1,6 @@
 # Chat do Topo
 
-Módulo para **Foundry VTT v14** (testado em 14.364 com dnd5e 5.3.3).
+Módulo para **Foundry VTT v13 e v14** (validado em 14.364 com dnd5e 5.3.3).
 
 Inverte o fluxo do chat: a mensagem mais recente aparece **no topo** e as mensagens
 antigas descem conforme novas chegam. A caixa de entrada continua embaixo.

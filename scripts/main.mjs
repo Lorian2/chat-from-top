@@ -1,5 +1,5 @@
 /**
- * Chat do Topo — Foundry VTT v14
+ * Chat do Topo — Foundry VTT v13/v14
  *
  * O core ordena as mensagens da mais antiga para a mais nova e trata o rodapé
  * como o fim do log. Aqui a ordem visual é invertida por CSS (a mais nova fica
@@ -16,6 +16,9 @@ Hooks.once("init", () => {
   const { ChatLog } = foundry.applications.sidebar.tabs;
   const proto = ChatLog.prototype;
 
+  // O container que rola é .chat-scroll; se ele não existir, o próprio .chat-log rola.
+  const getScroller = log => log.querySelector(".chat-scroll") ?? log.querySelector(".chat-log");
+
   Object.defineProperty(proto, "isAtBottom", {
     configurable: true,
     get() {
@@ -25,7 +28,8 @@ Hooks.once("init", () => {
 
   proto.scrollBottom = async function({ popout = false, waitImages = false } = {}) {
     if (!this.rendered) return;
-    const scroll = this.element.querySelector(".chat-scroll");
+    const scroll = getScroller(this.element);
+    if (!scroll) return;
     if (waitImages) await this.constructor.waitForImages(scroll);
     scroll.scrollTop = 0;
     this._chatFromTopAtNewest = true;
@@ -36,7 +40,7 @@ Hooks.once("init", () => {
 
   proto._chatFromTopOnScroll = function(event) {
     const scroll = event.target;
-    if (!scroll?.classList?.contains("chat-scroll")) return;
+    if (!scroll?.matches?.(".chat-scroll, .chat-log")) return;
     event.stopPropagation();
 
     const max = scroll.scrollHeight - scroll.clientHeight;
