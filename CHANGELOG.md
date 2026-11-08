@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.5
+
+- Correção da inversão no v13, sem depender de nomes de classes da versão.
+  - O CSS inverte qualquer container que tenha mensagens como filhas diretas
+    (`:has(> .message)`), então a caixa de texto fica fora e permanece embaixo.
+  - O container que rola é detectado pelo `overflow` real (`.chat-scroll`,
+    `.window-content` ou `.chat-log`), não pelo nome.
+  - Quando o próprio container das mensagens é o que rola, `column-reverse`
+    deixa as mensagens novas inalcançáveis no Chromium; nesse caso a inversão
+    usa `scaleY(-1)` e o scroll volta a funcionar.
+
 ## 1.2.4
 
 - Correção definitiva para v13: as mensagens ficam no topo e a caixa de texto

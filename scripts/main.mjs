@@ -2,31 +2,51 @@
  * Chat do Topo — Foundry VTT v13/v14
  *
  * O core ordena as mensagens da mais antiga para a mais nova e trata o rodapé
- * como o fim do log. Aqui a ordem visual é invertida por CSS (a mais nova fica
- * em cima) e o conceito de "fim" passa a ser o topo:
- *   - scrollBottom() rola para o topo (mensagem mais recente);
+ * como o fim do log. O CSS inverte o container das mensagens (a mais nova fica
+ * em cima); aqui o "fim" do log passa a ser o topo:
+ *   - scrollBottom() leva à mensagem mais recente;
  *   - "isAtBottom" continua significando "estou na mensagem mais recente";
  *   - o carregamento de mensagens antigas é disparado no fim real (embaixo).
  *
- * O listener de scroll do core é bloqueado no ancestral: ele assume o layout
- * antigo e, se rodasse, pularia para a mensagem mais antiga.
- *
- * Limitação v13: `isAtBottom` é um campo privado (#isAtBottom) no v13, não dá
- * para sobrescrever via prototype. O scroll ainda inverte pelo CSS, mas o core
- * pode usar seu próprio valor de isAtBottom internamente.
+ * O container que rola varia entre versões (.chat-scroll, .window-content ou o
+ * próprio .chat-log), então ele é detectado pelo overflow real, não pelo nome.
  */
 
 Hooks.once("init", () => {
   const { ChatLog } = foundry.applications.sidebar.tabs;
   const proto = ChatLog.prototype;
 
-  // O container que rola é .chat-scroll; se não existir, tenta .chat-log.
-  const getScroller = log =>
-    log.querySelector(".chat-scroll") ??
-    log.querySelector(".chat-log") ??
-    log;
+  const MSG = ".message, .chat-message";
+  const FLIP = "chat-from-top-flip";
 
-  // Só sobrescreve isAtBottom se não for campo privado (v14). No v13 é #isAtBottom e ignora silenciosamente.
+  const findScroller = root => {
+    const candidates = [".chat-scroll", ".chat-log", ".window-content"]
+      .map(sel => root.querySelector(sel))
+      .filter(Boolean);
+    return candidates.find(el => /(auto|scroll)/.test(getComputedStyle(el).overflowY))
+      ?? candidates[0] ?? root;
+  };
+
+  // Em column-reverse a mensagem mais recente fica no topo: posição 0 do scroll.
+  // No fallback com scaleY o layout segue normal e a mais recente fica no fim.
+  const isFlipped = el => el.classList.contains(FLIP);
+  const newestPos = el => (isFlipped(el) ? el.scrollHeight : 0);
+  const oldestPos = el => (isFlipped(el) ? 0 : el.scrollHeight);
+
+  // column-reverse no próprio container que rola deixa as mensagens novas
+  // inalcançáveis no Chromium; nesse caso a inversão é feita com scaleY(-1).
+  const fixLayout = root => {
+    const list = root.querySelector(MSG)?.parentElement;
+    if (!list || list === root) return;
+    if (list !== findScroller(root)) return;
+    if (getComputedStyle(list).flexDirection !== "column-reverse") return;
+    list.style.setProperty("flex-direction", "column", "important");
+    list.classList.add(FLIP);
+    list.style.transform = "scaleY(-1)";
+    for (const el of list.querySelectorAll(MSG)) el.style.transform = "scaleY(-1)";
+  };
+
+  // Só sobrescreve isAtBottom se não for campo privado (v13 usa #isAtBottom).
   try {
     Object.defineProperty(proto, "isAtBottom", {
       configurable: true,
@@ -35,59 +55,37 @@ Hooks.once("init", () => {
       }
     });
   } catch (_) {
-    // v13: campo privado, não sobrescrevível. Segue sem sobrescrever.
+    // Campo privado: segue sem sobrescrever.
   }
-
-  // Inverte apenas as mensagens. No v13 o .window-content contém mensagens + input,
-  // então o input é fixado embaixo com order: -1 (em column-reverse).
-  const forceReverse = log => {
-    if (!log) return;
-    const scroller = log.querySelector(".chat-scroll");
-    if (scroller) {
-      // v14
-      scroller.style.display = "flex";
-      scroller.style.flexDirection = "column-reverse";
-      return;
-    }
-    // v13
-    const content = log.querySelector(".window-content");
-    if (!content) return;
-    content.style.display = "flex";
-    content.style.flexDirection = "column-reverse";
-    const input = content.querySelector("form, .chat-form, #chat-controls, .chat-controls");
-    if (input) input.style.order = "-1";
-    const logEl = content.querySelector(".chat-log");
-    if (logEl) {
-      logEl.style.display = "flex";
-      logEl.style.flexDirection = "column-reverse";
-    }
-  };
 
   proto.scrollBottom = async function({ popout = false, waitImages = false } = {}) {
     if (!this.rendered) return;
-    const scroll = getScroller(this.element);
+    const scroll = findScroller(this.element);
     if (!scroll) return;
-    if (waitImages) await this.constructor.waitForImages(scroll);
-    scroll.scrollTop = 0;
+    if (waitImages) await this.constructor.waitForImages?.(scroll);
+    // Mensagens recém-inseridas no modo scaleY também precisam ser desviradas.
+    if (isFlipped(scroll)) {
+      for (const el of scroll.querySelectorAll(MSG)) el.style.transform = "scaleY(-1)";
+    }
+    scroll.scrollTop = newestPos(scroll);
     this._chatFromTopAtNewest = true;
     this.element.querySelector(".jump-to-bottom")?.toggleAttribute("hidden", true);
     scroll.classList.toggle("scrolled", scroll.scrollHeight > scroll.clientHeight);
-    if (popout) this.popout?.scrollBottom({ waitImages });
+    if (popout) this.popout?.scrollBottom?.({ waitImages });
   };
 
   proto._chatFromTopOnScroll = function(event) {
     const scroll = event.target;
-    if (!scroll?.matches?.(".chat-scroll, .chat-log")) return;
+    if (!scroll?.matches?.(".chat-scroll, .chat-log, .window-content")) return;
     event.stopPropagation();
 
-    const max = scroll.scrollHeight - scroll.clientHeight;
-    const atNewest = scroll.scrollTop <= 1;
-    const atOldest = max <= 0 || scroll.scrollTop >= max - 1;
+    const atNewest = Math.abs(scroll.scrollTop - newestPos(scroll)) <= 1;
+    const atOldest = Math.abs(scroll.scrollTop - oldestPos(scroll)) <= 1;
 
     this._chatFromTopAtNewest = atNewest;
     this.element.querySelector(".jump-to-bottom")?.toggleAttribute("hidden", atNewest);
     scroll.classList.toggle("scrolled", !atOldest);
-    if (atOldest) this.renderBatch(CONFIG.ChatMessage.batchSize);
+    if (atOldest) this.renderBatch?.(CONFIG.ChatMessage.batchSize);
   };
 
   proto._chatFromTopLabelJumpButton = function() {
@@ -101,11 +99,12 @@ Hooks.once("init", () => {
   const onFirstRender = proto._onFirstRender;
   proto._onFirstRender = async function(context, options) {
     await onFirstRender.call(this, context, options);
-    forceReverse(this.element);
     this.element.addEventListener("scroll", event => this._chatFromTopOnScroll(event), {
       capture: true,
       passive: true
     });
     this._chatFromTopLabelJumpButton();
+    fixLayout(this.element);
+    this.scrollBottom();
   };
 });
