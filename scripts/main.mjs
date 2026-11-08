@@ -20,11 +20,10 @@ Hooks.once("init", () => {
   const { ChatLog } = foundry.applications.sidebar.tabs;
   const proto = ChatLog.prototype;
 
-  // O container que rola é .chat-scroll; se não existir, tenta .chat-log, .window-content ou o próprio elemento.
+  // O container que rola é .chat-scroll; se não existir, tenta .chat-log.
   const getScroller = log =>
     log.querySelector(".chat-scroll") ??
     log.querySelector(".chat-log") ??
-    log.querySelector(".window-content") ??
     log;
 
   // Só sobrescreve isAtBottom se não for campo privado (v14). No v13 é #isAtBottom e ignora silenciosamente.
@@ -39,15 +38,13 @@ Hooks.once("init", () => {
     // v13: campo privado, não sobrescrevível. Segue sem sobrescrever.
   }
 
-  // Força o layout invertido no elemento do chat após o render (fallback para v13
-  // onde o CSS pode não alcançar devido a seletores específicos do core).
+  // Força o layout invertido apenas no container de mensagens (.chat-log), nunca na
+  // caixa de texto. Fallback para v13 onde o CSS pode não alcançar a estrutura do DOM.
   const forceReverse = log => {
     if (!log) return;
     const candidates = [
       log.querySelector(".chat-scroll"),
-      log.querySelector(".chat-log"),
-      log.querySelector(".window-content"),
-      log
+      log.querySelector(".chat-log")
     ].filter(Boolean);
     for (const el of candidates) {
       el.style.display = "flex";
@@ -69,7 +66,7 @@ Hooks.once("init", () => {
 
   proto._chatFromTopOnScroll = function(event) {
     const scroll = event.target;
-    if (!scroll?.matches?.(".chat-scroll, .chat-log, .window-content")) return;
+    if (!scroll?.matches?.(".chat-scroll, .chat-log")) return;
     event.stopPropagation();
 
     const max = scroll.scrollHeight - scroll.clientHeight;

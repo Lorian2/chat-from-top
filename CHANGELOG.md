@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.3
+
+- Correção: a caixa de texto do chat não fica mais no topo.
+  - O `flex-direction: column-reverse` agora aplica apenas ao `.chat-log` (as mensagens),
+    nunca ao container pai (`.window-content`) nem à caixa de entrada.
+  - O JS `forceReverse` só inverte `.chat-scroll` e `.chat-log`, deixando o input embaixo.
+
 ## 1.2.2
 
 - Correção agressiva para Foundry VTT v13:

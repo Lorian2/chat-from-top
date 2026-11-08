@@ -1,4 +1,5 @@
 /* A mensagem mais nova é o último item do DOM; column-reverse a coloca no topo.
+   Apenas o .chat-log (as mensagens) é invertido; a caixa de texto continua embaixo.
    v14: .chat-scroll envolve o .chat-log. v13: pode ser direto ou dentro de .window-content.
    #chat/#chat-popout restringem ao log principal (o painel de notificações fica de fora). */
 #chat .chat-log,
@@ -10,13 +11,6 @@
 #chat-popout > .window-content > .chat-log,
 .sidebar-tab#chat .chat-log,
 .sidebar-tab#chat-popout .chat-log {
-  display: flex !important;
-  flex-direction: column-reverse !important;
-}
-
-/* Se o .chat-log não for o container que rola, inverte também o container pai direto. */
-#chat > .window-content,
-#chat-popout > .window-content {
   display: flex !important;
   flex-direction: column-reverse !important;
 }
