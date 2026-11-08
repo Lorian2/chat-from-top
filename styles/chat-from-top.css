@@ -1,18 +1,38 @@
 /* A mensagem mais nova é o último item do DOM; column-reverse a coloca no topo.
-   Apenas o .chat-log (as mensagens) é invertido; a caixa de texto continua embaixo.
-   v14: .chat-scroll envolve o .chat-log. v13: pode ser direto ou dentro de .window-content.
-   #chat/#chat-popout restringem ao log principal (o painel de notificações fica de fora). */
+   Apenas as mensagens são invertidas; a caixa de texto continua embaixo. */
+
+/* v14: .chat-scroll envolve o .chat-log. */
 #chat .chat-log,
 #chat-popout .chat-log,
-.chat-scroll > .chat-log,
-#chat .window-content .chat-log,
-#chat-popout .window-content .chat-log,
-#chat > .window-content > .chat-log,
-#chat-popout > .window-content > .chat-log,
-.sidebar-tab#chat .chat-log,
-.sidebar-tab#chat-popout .chat-log {
+.chat-scroll > .chat-log {
   display: flex !important;
   flex-direction: column-reverse !important;
+}
+
+/* v13: o .window-content contém as mensagens E o input. Invertemos o container
+   para as mensagens irem ao topo, mas forçamos o input para o final (embaixo)
+   com order: -1 (em column-reverse, o menor order fica embaixo). */
+#chat:not(:has(.chat-scroll)) > .window-content,
+#chat-popout:not(:has(.chat-scroll)) > .window-content {
+  display: flex !important;
+  flex-direction: column-reverse !important;
+}
+
+#chat:not(:has(.chat-scroll)) .chat-log,
+#chat-popout:not(:has(.chat-scroll)) .chat-log {
+  display: flex !important;
+  flex-direction: column-reverse !important;
+}
+
+#chat:not(:has(.chat-scroll)) > .window-content > form,
+#chat:not(:has(.chat-scroll)) > .window-content > .chat-form,
+#chat:not(:has(.chat-scroll)) > .window-content > #chat-controls,
+#chat:not(:has(.chat-scroll)) > .window-content > .chat-controls,
+#chat-popout:not(:has(.chat-scroll)) > .window-content > form,
+#chat-popout:not(:has(.chat-scroll)) > .window-content > .chat-form,
+#chat-popout:not(:has(.chat-scroll)) > .window-content > #chat-controls,
+#chat-popout:not(:has(.chat-scroll)) > .window-content > .chat-controls {
+  order: -1 !important;
 }
 
 /* O botão do core aponta para baixo; agora "descer" leva às mensagens antigas. */

@@ -38,17 +38,28 @@ Hooks.once("init", () => {
     // v13: campo privado, não sobrescrevível. Segue sem sobrescrever.
   }
 
-  // Força o layout invertido apenas no container de mensagens (.chat-log), nunca na
-  // caixa de texto. Fallback para v13 onde o CSS pode não alcançar a estrutura do DOM.
+  // Inverte apenas as mensagens. No v13 o .window-content contém mensagens + input,
+  // então o input é fixado embaixo com order: -1 (em column-reverse).
   const forceReverse = log => {
     if (!log) return;
-    const candidates = [
-      log.querySelector(".chat-scroll"),
-      log.querySelector(".chat-log")
-    ].filter(Boolean);
-    for (const el of candidates) {
-      el.style.display = "flex";
-      el.style.flexDirection = "column-reverse";
+    const scroller = log.querySelector(".chat-scroll");
+    if (scroller) {
+      // v14
+      scroller.style.display = "flex";
+      scroller.style.flexDirection = "column-reverse";
+      return;
+    }
+    // v13
+    const content = log.querySelector(".window-content");
+    if (!content) return;
+    content.style.display = "flex";
+    content.style.flexDirection = "column-reverse";
+    const input = content.querySelector("form, .chat-form, #chat-controls, .chat-controls");
+    if (input) input.style.order = "-1";
+    const logEl = content.querySelector(".chat-log");
+    if (logEl) {
+      logEl.style.display = "flex";
+      logEl.style.flexDirection = "column-reverse";
     }
   };
 

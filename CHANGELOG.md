@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.4
+
+- Correção definitiva para v13: as mensagens ficam no topo e a caixa de texto
+  continua embaixo.
+  - No v13 o `.window-content` contém as mensagens **e** o input. O container é
+    invertido (`column-reverse`) e o input recebe `order: -1` para permanecer no
+    final (embaixo).
+  - O `.chat-log` também é invertido para a mensagem mais nova ficar no topo.
+  - As regras de v13 usam `:not(:has(.chat-scroll))`, então não afetam o v14.
+
 ## 1.2.3
 
 - Correção: a caixa de texto do chat não fica mais no topo.
