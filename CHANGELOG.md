@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.1
+
+- A prévia da mensagem agora aparece no **topo** da tela, com o chat fechado:
+  - o balão flutuante foi movido do canto inferior para o superior;
+  - os cards do painel de notificações do core (que empilhavam embaixo) passam a
+    empilhar em cima, com a mensagem mais recente no topo.
+
 ## 1.3.0
 
 - Novo balão de prévia: quando o chat não está visível (outra aba do sidebar ou
