@@ -108,3 +108,56 @@ Hooks.once("init", () => {
     this.scrollBottom();
   };
 });
+
+const plainText = html => {
+  const body = new DOMParser().parseFromString(String(html ?? ""), "text/html").body;
+  return body.textContent.replace(/\s+/g, " ").trim();
+};
+
+/**
+ * Balão de prévia: quando o chat não está visível (outra aba do sidebar ou
+ * sidebar recolhida), mostra remetente + texto da mensagem nova.
+ *
+ * O core já exibe um painel de cards (#chat-notifications), mas ele fica oculto
+ * em janelas estreitas ou com o ajuste "Notification Pip". O balão só aparece
+ * quando esse painel do core não está ativo, para não duplicar o aviso.
+ */
+Hooks.once("ready", () => {
+  const preview = document.createElement("div");
+  preview.id = "chat-from-top-preview";
+  preview.setAttribute("role", "status");
+  preview.innerHTML = '<div class="speaker"></div><div class="text"></div>';
+  document.body.append(preview);
+
+  let hideTimer;
+  const hide = () => preview.classList.remove("visible");
+
+  const show = message => {
+    const speaker = message.speaker?.alias || message.author?.name || "";
+    preview.querySelector(".speaker").textContent = speaker;
+    preview.querySelector(".text").textContent = plainText(message.content);
+    preview.setAttribute("aria-label", `${game.i18n.localize("CHAT_FROM_TOP.NewMessage")}: ${speaker}`);
+
+    // Fica à esquerda do sidebar (ou acima da barra de abas, se recolhido).
+    const sidebar = document.getElementById("sidebar");
+    preview.style.right = `${ui.sidebar?.expanded && sidebar ? sidebar.offsetWidth + 16 : 64}px`;
+
+    preview.classList.add("visible");
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(hide, 8000);
+  };
+
+  preview.addEventListener("click", () => {
+    hide();
+    ui.sidebar.expand?.();
+    ui.chat.activate?.();
+  });
+
+  Hooks.on("createChatMessage", message => {
+    if (!(message.visible ?? message.isContentVisible ?? true)) return;
+    if (ui.sidebar?.expanded && ui.chat?.active) return;
+    if (ui.chat?.popout?.rendered) return;
+    if (document.querySelector("#chat-notifications.active")) return;
+    show(message);
+  });
+});

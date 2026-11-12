@@ -1,5 +1,6 @@
 {
   "CHAT_FROM_TOP": {
-    "JumpToNewest": "Jump to newest message"
+    "JumpToNewest": "Jump to newest message",
+    "NewMessage": "New message"
   }
 }

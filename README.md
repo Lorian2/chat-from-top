@@ -30,15 +30,19 @@ movida para a borda direita.
 
 ## Como funciona
 
-- `styles/chat-from-top.css` — inverte o chat (`flex-direction: column-reverse`).
+- `styles/chat-from-top.css` — inverte o chat (`flex-direction: column-reverse`),
+  o que coloca o último item do DOM (a mensagem mais nova) no topo da tela.
 - `styles/sidebar-right.css` — move a barra de abas do sidebar para a borda direita,
   deixando o painel (e a caixa de texto do chat) à esquerda dela.
-  o que coloca o último item do DOM (a mensagem mais nova) no topo da tela.
 - `scripts/main.mjs` ajusta o comportamento do core:
   - `scrollBottom()` passa a rolar para o topo (mensagem mais recente);
   - o botão "ir para o fim" vira "ir para a mais recente" (ícone e rótulo);
   - o carregamento de mensagens antigas é disparado ao chegar no fim real (embaixo);
   - o listener de scroll original do core é ignorado, pois ele assume o layout antigo.
+- Balão de prévia: com o chat fora de vista (outra aba ou sidebar recolhida), a
+  mensagem nova aparece num balão flutuante com remetente e texto. Ele some em
+  8 segundos ou ao clicar (o clique abre o chat). Quando o painel de notificações
+  do core já está visível, o balão não aparece para não duplicar o aviso.
 
 ## Observações
 

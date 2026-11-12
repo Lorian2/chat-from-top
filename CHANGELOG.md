@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0
+
+- Novo balão de prévia: quando o chat não está visível (outra aba do sidebar ou
+  sidebar recolhida), uma mensagem nova aparece num balão flutuante com remetente
+  e texto, que some sozinho em 8 segundos ou ao clicar (o clique abre o chat).
+  - Só aparece quando o painel de notificações do core (`#chat-notifications`)
+    não está ativo, para não duplicar o aviso.
+
 ## 1.2.5
 
 - Correção da inversão no v13, sem depender de nomes de classes da versão.
