@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.2
+
+- Removido o balão de prévia próprio. Com o chat fechado, a prévia continua
+  sendo o painel de notificações do core, que empilha no topo da tela.
+- Correção: apagar uma mensagem não rola mais o chat para as mensagens antigas
+  (e não carrega histórico à toa).
+
 ## 1.3.1
 
 - A prévia da mensagem agora aparece no **topo** da tela, com o chat fechado:

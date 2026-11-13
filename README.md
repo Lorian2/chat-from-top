@@ -39,11 +39,9 @@ movida para a borda direita.
   - o botão "ir para o fim" vira "ir para a mais recente" (ícone e rótulo);
   - o carregamento de mensagens antigas é disparado ao chegar no fim real (embaixo);
   - o listener de scroll original do core é ignorado, pois ele assume o layout antigo.
-- Balão de prévia: com o chat fora de vista (outra aba ou sidebar recolhida), a
-  mensagem nova aparece no **topo da tela** num balão flutuante com remetente e
-  texto. Ele some em 8 segundos ou ao clicar (o clique abre o chat). Quando o
-  painel de notificações do core já está visível, o balão não aparece para não
-  duplicar o aviso (e os cards do core também passam a empilhar no topo).
+- Com o chat fora de vista (outra aba ou sidebar recolhida), a prévia da mensagem
+  nova aparece no **topo da tela**: os cards do painel de notificações do core
+  passam a empilhar em cima, com a mensagem mais recente no topo.
 
 ## Observações
 
